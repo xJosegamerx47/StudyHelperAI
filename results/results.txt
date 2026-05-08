@@ -1,0 +1,43 @@
+Resultados de experimentos - StudyHelperAI
+
+Formula utilizada:
+f(s,a) = 0.40(dificultad) + 0.35(impacto) + 0.25(urgencia)
+
+Experimento 1: Caso base
+Estado:
+- Redes y Telecomunicaciones tiene baja calificacion, bajo progreso, examen cercano e impacto alto.
+Decision del agente:
+- Materia recomendada: Redes y Telecomunicaciones
+- Tema recomendado: Modelo OSI y direccionamiento IP
+- Horas recomendadas: 3
+- Puntaje final: 0.622
+
+Interpretacion:
+El agente priorizo Redes y Telecomunicaciones porque representa la combinacion mas critica entre dificultad, impacto y urgencia.
+
+Experimento 2: Cambio en el entorno
+Estado:
+- Graficacion y Videojuegos tiene examen al dia siguiente.
+Decision del agente:
+- Materia recomendada: Graficacion y Videojuegos
+- Tema recomendado: Shaders y transformaciones
+- Horas recomendadas: 3
+- Puntaje final: 0.683
+
+Interpretacion:
+El agente cambio su decision porque la urgencia aumento considerablemente. Aunque Redes seguia siendo importante, Graficacion se volvio prioritaria por tener el examen mas cercano.
+
+Experimento 3: Bajo progreso en Sistemas Operativos
+Estado:
+- Sistemas Operativos tiene calificacion baja, progreso bajo e impacto alto.
+Decision del agente:
+- Materia recomendada: Sistemas Operativos
+- Tema recomendado: Procesos e hilos
+- Horas recomendadas: 3
+- Puntaje final: 0.592
+
+Interpretacion:
+El agente selecciono Sistemas Operativos porque el bajo rendimiento y bajo progreso aumentaron la dificultad del tema.
+
+Conclusion general:
+Los experimentos muestran que StudyHelperAI toma decisiones reales a partir del estado del sistema. Cuando cambian variables como dias para examen, calificacion o progreso, el agente modifica su recomendacion. Esto demuestra que el agente responde a cambios en el entorno y que la funcion de decision permite justificar sus acciones.

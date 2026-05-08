@@ -3,14 +3,39 @@ from copy import deepcopy
 
 
 class StudyHelperAgent:
-    def __init__(self, data_path=None, total_available_hours=5):
+    def __init__(self, data_path=None, total_available_hours=5, profile="balanced"):
         self.data_path = data_path
         self.total_available_hours = total_available_hours
+        self.profile = profile
 
-        # Pesos de la funcion de decision
-        self.weight_difficulty = 0.40
-        self.weight_impact = 0.35
-        self.weight_urgency = 0.25
+        self.weight_profiles = {
+            "balanced": {
+                "difficulty": 0.35,
+                "impact": 0.25,
+                "urgency": 0.20,
+                "task_load": 0.10,
+                "subjective_difficulty": 0.10
+            },
+            "urgent": {
+                "difficulty": 0.25,
+                "impact": 0.20,
+                "urgency": 0.35,
+                "task_load": 0.10,
+                "subjective_difficulty": 0.10
+            },
+            "low_performance": {
+                "difficulty": 0.45,
+                "impact": 0.20,
+                "urgency": 0.15,
+                "task_load": 0.10,
+                "subjective_difficulty": 0.10
+            }
+        }
+
+        if self.profile not in self.weight_profiles:
+            self.profile = "balanced"
+
+        self.weights = self.weight_profiles[self.profile]
 
     def load_state(self):
         """
@@ -29,7 +54,11 @@ class StudyHelperAgent:
                     "grade": float(row["grade"]),
                     "progress": float(row["progress"]),
                     "days_to_exam": float(row["days_to_exam"]),
-                    "impact": float(row["impact"])
+                    "impact": float(row["impact"]),
+                    "task_load": float(row["task_load"]),
+                    "subjective_difficulty": float(row["subjective_difficulty"]),
+                    "available_days": float(row["available_days"]),
+                    "learning_style": row["learning_style"]
                 })
 
         return state
@@ -45,30 +74,49 @@ class StudyHelperAgent:
         difficulty = (grade_factor + progress_factor) / 2
         return difficulty
 
-    def calculate_urgency(self, days_to_exam):
+    def calculate_urgency(self, days_to_exam, available_days):
         """
-        Calcula la urgencia.
-        Entre menos dias falten para el examen, mayor sera la urgencia.
+        Calcula la urgencia considerando dias para examen y dias reales disponibles.
+        Entre menos dias falten y menos dias disponibles tenga el estudiante, mayor sera la urgencia.
         """
         if days_to_exam <= 0:
-            return 1.0
+            exam_urgency = 1.0
+        else:
+            exam_urgency = 1 / days_to_exam
 
-        urgency = 1 / days_to_exam
+        if available_days <= 0:
+            availability_urgency = 1.0
+        else:
+            availability_urgency = 1 / available_days
+
+        urgency = (exam_urgency + availability_urgency) / 2
         return urgency
+
+    def normalize_task_load(self, task_load):
+        """
+        Normaliza la carga de tareas de escala 1-5 a escala 0-1.
+        """
+        return min(1.0, max(0.0, task_load / 5))
 
     def score_action(self, item):
         """
-        Funcion de decision:
-        f(s,a) = 0.40(dificultad) + 0.35(impacto) + 0.25(urgencia)
+        Funcion de decision extendida:
+        f(s,a) =
+        w1(dificultad) + w2(impacto) + w3(urgencia)
+        + w4(carga_tareas) + w5(dificultad_subjetiva)
         """
         difficulty = self.calculate_difficulty(item["grade"], item["progress"])
-        urgency = self.calculate_urgency(item["days_to_exam"])
+        urgency = self.calculate_urgency(item["days_to_exam"], item["available_days"])
         impact = item["impact"]
+        task_load = self.normalize_task_load(item["task_load"])
+        subjective_difficulty = item["subjective_difficulty"]
 
         score = (
-            self.weight_difficulty * difficulty +
-            self.weight_impact * impact +
-            self.weight_urgency * urgency
+            self.weights["difficulty"] * difficulty +
+            self.weights["impact"] * impact +
+            self.weights["urgency"] * urgency +
+            self.weights["task_load"] * task_load +
+            self.weights["subjective_difficulty"] * subjective_difficulty
         )
 
         return {
@@ -78,6 +126,10 @@ class StudyHelperAgent:
             "progress": item["progress"],
             "days_to_exam": item["days_to_exam"],
             "impact": impact,
+            "task_load": task_load,
+            "subjective_difficulty": subjective_difficulty,
+            "available_days": item["available_days"],
+            "learning_style": item["learning_style"],
             "difficulty": difficulty,
             "urgency": urgency,
             "score": score
@@ -100,20 +152,63 @@ class StudyHelperAgent:
 
         return ranked_actions
 
+    def get_priority_level(self, score):
+        if score >= 0.60:
+            return "Alta"
+        if score >= 0.45:
+            return "Media"
+        return "Baja"
+
+    def recommend_activity(self, learning_style):
+        """
+        Recomienda tipo de actividad segun el estilo de aprendizaje.
+        """
+        if learning_style == "visual":
+            return "Ver material visual y hacer un mapa conceptual"
+
+        if learning_style == "reading":
+            return "Leer apuntes, resumir conceptos clave y responder preguntas"
+
+        if learning_style == "practice":
+            return "Resolver ejercicios practicos y revisar errores"
+
+        return "Repasar el tema y resolver ejercicios de refuerzo"
+
+    def recommend_resource(self, learning_style):
+        """
+        Recomienda recurso de estudio segun el estilo de aprendizaje.
+        """
+        if learning_style == "visual":
+            return "Videos, diagramas y esquemas"
+
+        if learning_style == "reading":
+            return "Apuntes, libro de texto y resumen escrito"
+
+        if learning_style == "practice":
+            return "Ejercicios, problemas guiados y practicas"
+
+        return "Material de repaso general"
+
     def recommend_hours(self, action):
         """
-        Recomienda horas de estudio segun dificultad, urgencia y puntaje.
+        Recomienda horas de estudio segun puntaje, urgencia, dificultad y carga de tareas.
         """
         hours = 1
 
         if action["score"] >= 0.60:
             hours = 3
-        elif action["score"] >= 0.50:
+        elif action["score"] >= 0.45:
             hours = 2
         else:
             hours = 1
 
-        if action["days_to_exam"] <= 2:
+        if action["urgency"] >= 0.50:
+            hours += 1
+
+        if action["difficulty"] >= 0.50:
+            hours += 1
+
+        if action["task_load"] >= 0.80:
             hours += 1
 
         return hours
@@ -122,17 +217,24 @@ class StudyHelperAgent:
         """
         Genera un plan de estudio usando el ranking de prioridades
         y el total de horas disponibles.
+
+        Para evitar que todo el tiempo se asigne a una sola materia,
+        se limita el maximo de horas por tema.
         """
         ranked_actions = self.rank_actions(state)
 
         remaining_hours = self.total_available_hours
         study_plan = []
+        max_hours_per_subject = 3
 
         for action in ranked_actions:
             if remaining_hours <= 0:
                 break
 
             recommended_hours = self.recommend_hours(action)
+
+            if recommended_hours > max_hours_per_subject:
+                recommended_hours = max_hours_per_subject
 
             if recommended_hours > remaining_hours:
                 recommended_hours = remaining_hours
@@ -143,9 +245,15 @@ class StudyHelperAgent:
                     "topic": action["topic"],
                     "assigned_hours": recommended_hours,
                     "score": action["score"],
+                    "priority": self.get_priority_level(action["score"]),
                     "difficulty": action["difficulty"],
                     "impact": action["impact"],
-                    "urgency": action["urgency"]
+                    "urgency": action["urgency"],
+                    "task_load": action["task_load"],
+                    "subjective_difficulty": action["subjective_difficulty"],
+                    "learning_style": action["learning_style"],
+                    "activity": self.recommend_activity(action["learning_style"]),
+                    "resource": self.recommend_resource(action["learning_style"])
                 })
 
                 remaining_hours -= recommended_hours
@@ -191,13 +299,18 @@ class StudyHelperAgent:
         assigned_hours = sum(item["assigned_hours"] for item in study_plan)
         time_usage = assigned_hours / self.total_available_hours
 
+        high_priority_count = sum(
+            1 for item in study_plan if item["priority"] == "Alta"
+        )
+
         metrics = {
             "average_score": average_score,
             "best_score": best_score,
             "score_difference": score_difference,
             "assigned_hours": assigned_hours,
             "available_hours": self.total_available_hours,
-            "time_usage": time_usage
+            "time_usage": time_usage,
+            "high_priority_count": high_priority_count
         }
 
         return metrics
@@ -212,6 +325,8 @@ class StudyHelperAgent:
         metrics = self.calculate_metrics(ranked_actions, study_plan)
 
         return {
+            "profile": self.profile,
+            "weights": self.weights,
             "ranked_actions": ranked_actions,
             "study_plan": study_plan,
             "updated_state": updated_state,
@@ -220,7 +335,6 @@ class StudyHelperAgent:
 
     def choose_best_action(self, state):
         """
-        Mantiene compatibilidad con la version anterior.
         Devuelve la mejor accion individual.
         """
         ranked_actions = self.rank_actions(state)

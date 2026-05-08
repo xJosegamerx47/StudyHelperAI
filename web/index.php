@@ -1,24 +1,33 @@
 <?php
-$profile = $_GET["profile"] ?? "balanced";
-$hours = $_GET["hours"] ?? "5";
-
-$allowedProfiles = ["balanced", "urgent", "low_performance"];
-
-if (!in_array($profile, $allowedProfiles)) {
-    $profile = "balanced";
-}
-
-if (!is_numeric($hours) || intval($hours) <= 0) {
-    $hours = "5";
-}
-
 $projectRoot = dirname(__DIR__);
+$csvPath = $projectRoot . DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "student_data.csv";
 $pythonScript = $projectRoot . DIRECTORY_SEPARATOR . "src" . DIRECTORY_SEPARATOR . "web_output.py";
 
-$command = "python " . escapeshellarg($pythonScript) . " " . escapeshellarg($profile) . " " . escapeshellarg($hours);
-$jsonOutput = shell_exec($command);
+$fields = [
+    "subject",
+    "topic",
+    "grade",
+    "progress",
+    "days_to_exam",
+    "impact",
+    "task_load",
+    "subjective_difficulty",
+    "available_days",
+    "learning_style"
+];
 
-$data = json_decode($jsonOutput, true);
+$fieldLabels = [
+    "subject" => "Materia",
+    "topic" => "Tema",
+    "grade" => "Calificación",
+    "progress" => "Progreso",
+    "days_to_exam" => "Días examen",
+    "impact" => "Impacto",
+    "task_load" => "Carga tareas",
+    "subjective_difficulty" => "Dificultad subjetiva",
+    "available_days" => "Días disponibles",
+    "learning_style" => "Estilo"
+];
 
 function safe($value) {
     return htmlspecialchars((string)$value, ENT_QUOTES, "UTF-8");
@@ -34,10 +43,7 @@ function formatPercent($value) {
 
 function formatHours($hours) {
     $hours = (int)$hours;
-    if ($hours === 1) {
-        return "1 hora";
-    }
-    return $hours . " horas";
+    return $hours === 1 ? "1 hora" : $hours . " horas";
 }
 
 function profileLabel($profile) {
@@ -46,7 +52,6 @@ function profileLabel($profile) {
         "urgent" => "Urgent",
         "low_performance" => "Low performance"
     ];
-
     return $labels[$profile] ?? $profile;
 }
 
@@ -58,7 +63,6 @@ function factorLabel($factor) {
         "task_load" => "Carga de tareas",
         "subjective_difficulty" => "Dificultad subjetiva"
     ];
-
     return $labels[$factor] ?? $factor;
 }
 
@@ -68,9 +72,94 @@ function styleLabel($style) {
         "visual" => "Visual",
         "reading" => "Lectura"
     ];
-
     return $labels[$style] ?? $style;
 }
+
+function readCsvData($csvPath) {
+    $rows = [];
+
+    if (!file_exists($csvPath)) {
+        return $rows;
+    }
+
+    $file = fopen($csvPath, "r");
+    $headers = fgetcsv($file);
+
+    while (($data = fgetcsv($file)) !== false) {
+        $row = [];
+        foreach ($headers as $index => $header) {
+            $row[$header] = $data[$index] ?? "";
+        }
+        $rows[] = $row;
+    }
+
+    fclose($file);
+    return $rows;
+}
+
+function writeCsvData($csvPath, $rows, $fields) {
+    $file = fopen($csvPath, "w");
+
+    fputcsv($file, $fields);
+
+    foreach ($rows as $row) {
+        $line = [];
+        foreach ($fields as $field) {
+            $line[] = $row[$field] ?? "";
+        }
+        fputcsv($file, $line);
+    }
+
+    fclose($file);
+}
+
+$profile = $_GET["profile"] ?? "balanced";
+$hours = $_GET["hours"] ?? "5";
+$message = "";
+
+$allowedProfiles = ["balanced", "urgent", "low_performance"];
+
+if (!in_array($profile, $allowedProfiles)) {
+    $profile = "balanced";
+}
+
+if (!is_numeric($hours) || intval($hours) <= 0) {
+    $hours = "5";
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["save_data"])) {
+    $newRows = [];
+
+    if (isset($_POST["rows"]) && is_array($_POST["rows"])) {
+        foreach ($_POST["rows"] as $row) {
+            if (trim($row["subject"] ?? "") === "" || trim($row["topic"] ?? "") === "") {
+                continue;
+            }
+
+            $newRows[] = [
+                "subject" => $row["subject"] ?? "",
+                "topic" => $row["topic"] ?? "",
+                "grade" => $row["grade"] ?? "0",
+                "progress" => $row["progress"] ?? "0",
+                "days_to_exam" => $row["days_to_exam"] ?? "1",
+                "impact" => $row["impact"] ?? "0",
+                "task_load" => $row["task_load"] ?? "1",
+                "subjective_difficulty" => $row["subjective_difficulty"] ?? "0",
+                "available_days" => $row["available_days"] ?? "1",
+                "learning_style" => $row["learning_style"] ?? "practice"
+            ];
+        }
+    }
+
+    writeCsvData($csvPath, $newRows, $fields);
+    $message = "Datos guardados correctamente en data/student_data.csv";
+}
+
+$csvRows = readCsvData($csvPath);
+
+$command = "python " . escapeshellarg($pythonScript) . " " . escapeshellarg($profile) . " " . escapeshellarg($hours);
+$jsonOutput = shell_exec($command);
+$data = json_decode($jsonOutput, true);
 ?>
 
 <!DOCTYPE html>
@@ -88,17 +177,13 @@ function styleLabel($style) {
         }
 
         .container {
-            max-width: 1250px;
+            max-width: 1300px;
             margin: auto;
         }
 
         h1 {
             margin-bottom: 5px;
             letter-spacing: 2px;
-        }
-
-        h2 {
-            margin-top: 0;
         }
 
         .subtitle {
@@ -123,12 +208,46 @@ function styleLabel($style) {
 
         th, td {
             border-bottom: 1px solid #ddd;
-            padding: 10px;
+            padding: 9px;
             text-align: left;
         }
 
         th {
             background: #eef2f7;
+        }
+
+        input, select, button {
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #bbb;
+            font-size: 14px;
+        }
+
+        input[type="number"] {
+            width: 80px;
+        }
+
+        .wide-input {
+            width: 190px;
+        }
+
+        button {
+            background: #2f6fed;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #1f55c9;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .badge {
@@ -162,34 +281,12 @@ function styleLabel($style) {
             border-radius: 8px;
         }
 
-        .plan-item h3 {
-            margin-top: 0;
-        }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        select, input, button {
-            padding: 9px 11px;
-            border-radius: 6px;
-            border: 1px solid #bbb;
-            font-size: 14px;
-        }
-
-        button {
-            background: #2f6fed;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background: #1f55c9;
+        .success {
+            background: #e2f3e8;
+            color: #146c2e;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
         }
 
         .error {
@@ -199,22 +296,13 @@ function styleLabel($style) {
             border-radius: 8px;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
-
-        @media (max-width: 900px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
         .small-note {
             color: #666;
             font-size: 14px;
-            margin-top: 8px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
         }
     </style>
 </head>
@@ -244,6 +332,53 @@ function styleLabel($style) {
         </form>
     </div>
 
+    <div class="card">
+        <h2>Editar datos académicos</h2>
+        <p class="small-note">
+            Modifica los valores del estado del estudiante y guarda los cambios en el archivo CSV.
+        </p>
+
+        <?php if ($message !== ""): ?>
+            <div class="success"><?php echo safe($message); ?></div>
+        <?php endif; ?>
+
+        <form method="POST">
+            <div class="table-wrapper">
+                <table>
+                    <tr>
+                        <?php foreach ($fields as $field): ?>
+                            <th><?php echo safe($fieldLabels[$field]); ?></th>
+                        <?php endforeach; ?>
+                    </tr>
+
+                    <?php foreach ($csvRows as $index => $row): ?>
+                        <tr>
+                            <td><input class="wide-input" name="rows[<?php echo $index; ?>][subject]" value="<?php echo safe($row["subject"]); ?>"></td>
+                            <td><input class="wide-input" name="rows[<?php echo $index; ?>][topic]" value="<?php echo safe($row["topic"]); ?>"></td>
+                            <td><input type="number" name="rows[<?php echo $index; ?>][grade]" value="<?php echo safe($row["grade"]); ?>" min="0" max="100"></td>
+                            <td><input type="number" name="rows[<?php echo $index; ?>][progress]" value="<?php echo safe($row["progress"]); ?>" min="0" max="100"></td>
+                            <td><input type="number" name="rows[<?php echo $index; ?>][days_to_exam]" value="<?php echo safe($row["days_to_exam"]); ?>" min="1"></td>
+                            <td><input type="number" step="0.01" name="rows[<?php echo $index; ?>][impact]" value="<?php echo safe($row["impact"]); ?>" min="0" max="1"></td>
+                            <td><input type="number" name="rows[<?php echo $index; ?>][task_load]" value="<?php echo safe($row["task_load"]); ?>" min="1" max="5"></td>
+                            <td><input type="number" step="0.01" name="rows[<?php echo $index; ?>][subjective_difficulty]" value="<?php echo safe($row["subjective_difficulty"]); ?>" min="0" max="1"></td>
+                            <td><input type="number" name="rows[<?php echo $index; ?>][available_days]" value="<?php echo safe($row["available_days"]); ?>" min="1"></td>
+                            <td>
+                                <select name="rows[<?php echo $index; ?>][learning_style]">
+                                    <option value="practice" <?php if ($row["learning_style"] === "practice") echo "selected"; ?>>Práctica</option>
+                                    <option value="visual" <?php if ($row["learning_style"] === "visual") echo "selected"; ?>>Visual</option>
+                                    <option value="reading" <?php if ($row["learning_style"] === "reading") echo "selected"; ?>>Lectura</option>
+                                </select>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            </div>
+
+            <br>
+            <button type="submit" name="save_data" value="1">Guardar datos</button>
+        </form>
+    </div>
+
     <?php if (!$data): ?>
         <div class="error">
             No se pudo ejecutar el agente. Revisa que Python funcione y que el archivo src/web_output.py exista.
@@ -266,10 +401,6 @@ function styleLabel($style) {
                     </tr>
                 <?php endforeach; ?>
             </table>
-
-            <p class="small-note">
-                El perfil cambia los pesos usados por el agente para priorizar dificultad, impacto, urgencia, carga de tareas y dificultad subjetiva.
-            </p>
         </div>
 
         <div class="card">

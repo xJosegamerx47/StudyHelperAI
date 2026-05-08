@@ -1,0 +1,142 @@
+Resultados de experimentos - StudyHelperAI
+==========================================================================================
+Formula utilizada:
+f(s,a) = 0.40(dificultad) + 0.35(impacto) + 0.25(urgencia)
+
+==========================================================================================
+ESCENARIO: Caso base: Redes tiene bajo rendimiento y examen cercano
+==========================================================================================
+
+Estado inicial
+--------------------------------------------------------------------------------
+- Bases de Datos Avanzadas | Tema: Consultas OQL y objetos | Calificacion: 68 | Progreso: 55% | Dias para examen: 4 | Impacto: 0.8
+- Graficacion y Videojuegos | Tema: Shaders y transformaciones | Calificacion: 72 | Progreso: 60% | Dias para examen: 3 | Impacto: 0.85
+- Redes y Telecomunicaciones | Tema: Modelo OSI y direccionamiento IP | Calificacion: 64 | Progreso: 45% | Dias para examen: 2 | Impacto: 0.9
+- Sistemas Operativos | Tema: Procesos e hilos | Calificacion: 70 | Progreso: 50% | Dias para examen: 5 | Impacto: 0.75
+- Inteligencia Artificial | Tema: Agentes inteligentes y heuristicas | Calificacion: 82 | Progreso: 70% | Dias para examen: 6 | Impacto: 0.7
+
+Ranking de prioridades:
+--------------------------------------------------------------------------------
+1. Redes y Telecomunicaciones - Modelo OSI y direccionamiento IP | Puntaje: 0.622 | Dificultad: 0.455 | Impacto: 0.900 | Urgencia: 0.500
+2. Graficacion y Videojuegos - Shaders y transformaciones | Puntaje: 0.517 | Dificultad: 0.340 | Impacto: 0.850 | Urgencia: 0.333
+3. Bases de Datos Avanzadas - Consultas OQL y objetos | Puntaje: 0.496 | Dificultad: 0.385 | Impacto: 0.800 | Urgencia: 0.250
+4. Sistemas Operativos - Procesos e hilos | Puntaje: 0.472 | Dificultad: 0.400 | Impacto: 0.750 | Urgencia: 0.200
+5. Inteligencia Artificial - Agentes inteligentes y heuristicas | Puntaje: 0.383 | Dificultad: 0.240 | Impacto: 0.700 | Urgencia: 0.167
+
+Plan de estudio:
+--------------------------------------------------------------------------------
+1. Estudiar Redes y Telecomunicaciones - Modelo OSI y direccionamiento IP durante 4 horas (puntaje: 0.622)
+2. Estudiar Graficacion y Videojuegos - Shaders y transformaciones durante 1 hora (puntaje: 0.517)
+
+Estado actualizado despues del plan
+--------------------------------------------------------------------------------
+- Bases de Datos Avanzadas | Tema: Consultas OQL y objetos | Calificacion: 68 | Progreso: 55% | Dias para examen: 4 | Impacto: 0.8
+- Graficacion y Videojuegos | Tema: Shaders y transformaciones | Calificacion: 72 | Progreso: 65% | Dias para examen: 3 | Impacto: 0.85
+- Redes y Telecomunicaciones | Tema: Modelo OSI y direccionamiento IP | Calificacion: 64 | Progreso: 65% | Dias para examen: 2 | Impacto: 0.9
+- Sistemas Operativos | Tema: Procesos e hilos | Calificacion: 70 | Progreso: 50% | Dias para examen: 5 | Impacto: 0.75
+- Inteligencia Artificial | Tema: Agentes inteligentes y heuristicas | Calificacion: 82 | Progreso: 70% | Dias para examen: 6 | Impacto: 0.7
+
+Metricas del escenario:
+--------------------------------------------------------------------------------
+Puntaje promedio evaluado: 0.498
+Mejor puntaje encontrado: 0.622
+Diferencia entre primera y segunda opcion: 0.105
+Horas asignadas: 5
+Horas disponibles: 5
+Uso del tiempo disponible: 100.0%
+
+Interpretacion:
+El agente comparo todas las acciones posibles, eligio las de mayor prioridad y distribuyo el tiempo disponible de acuerdo con la funcion heuristica.
+
+==========================================================================================
+ESCENARIO: Cambio en el entorno: Graficacion tiene examen mañana
+==========================================================================================
+
+Estado inicial
+--------------------------------------------------------------------------------
+- Bases de Datos Avanzadas | Tema: Consultas OQL y objetos | Calificacion: 68 | Progreso: 55% | Dias para examen: 4 | Impacto: 0.8
+- Graficacion y Videojuegos | Tema: Shaders y transformaciones | Calificacion: 72 | Progreso: 60% | Dias para examen: 1 | Impacto: 0.85
+- Redes y Telecomunicaciones | Tema: Modelo OSI y direccionamiento IP | Calificacion: 64 | Progreso: 45% | Dias para examen: 5 | Impacto: 0.9
+- Sistemas Operativos | Tema: Procesos e hilos | Calificacion: 70 | Progreso: 50% | Dias para examen: 5 | Impacto: 0.75
+- Inteligencia Artificial | Tema: Agentes inteligentes y heuristicas | Calificacion: 82 | Progreso: 70% | Dias para examen: 6 | Impacto: 0.7
+
+Ranking de prioridades:
+--------------------------------------------------------------------------------
+1. Graficacion y Videojuegos - Shaders y transformaciones | Puntaje: 0.683 | Dificultad: 0.340 | Impacto: 0.850 | Urgencia: 1.000
+2. Redes y Telecomunicaciones - Modelo OSI y direccionamiento IP | Puntaje: 0.547 | Dificultad: 0.455 | Impacto: 0.900 | Urgencia: 0.200
+3. Bases de Datos Avanzadas - Consultas OQL y objetos | Puntaje: 0.496 | Dificultad: 0.385 | Impacto: 0.800 | Urgencia: 0.250
+4. Sistemas Operativos - Procesos e hilos | Puntaje: 0.472 | Dificultad: 0.400 | Impacto: 0.750 | Urgencia: 0.200
+5. Inteligencia Artificial - Agentes inteligentes y heuristicas | Puntaje: 0.383 | Dificultad: 0.240 | Impacto: 0.700 | Urgencia: 0.167
+
+Plan de estudio:
+--------------------------------------------------------------------------------
+1. Estudiar Graficacion y Videojuegos - Shaders y transformaciones durante 4 horas (puntaje: 0.683)
+2. Estudiar Redes y Telecomunicaciones - Modelo OSI y direccionamiento IP durante 1 hora (puntaje: 0.547)
+
+Estado actualizado despues del plan
+--------------------------------------------------------------------------------
+- Bases de Datos Avanzadas | Tema: Consultas OQL y objetos | Calificacion: 68 | Progreso: 55% | Dias para examen: 4 | Impacto: 0.8
+- Graficacion y Videojuegos | Tema: Shaders y transformaciones | Calificacion: 72 | Progreso: 80% | Dias para examen: 1 | Impacto: 0.85
+- Redes y Telecomunicaciones | Tema: Modelo OSI y direccionamiento IP | Calificacion: 64 | Progreso: 50% | Dias para examen: 5 | Impacto: 0.9
+- Sistemas Operativos | Tema: Procesos e hilos | Calificacion: 70 | Progreso: 50% | Dias para examen: 5 | Impacto: 0.75
+- Inteligencia Artificial | Tema: Agentes inteligentes y heuristicas | Calificacion: 82 | Progreso: 70% | Dias para examen: 6 | Impacto: 0.7
+
+Metricas del escenario:
+--------------------------------------------------------------------------------
+Puntaje promedio evaluado: 0.516
+Mejor puntaje encontrado: 0.683
+Diferencia entre primera y segunda opcion: 0.136
+Horas asignadas: 5
+Horas disponibles: 5
+Uso del tiempo disponible: 100.0%
+
+Interpretacion:
+El agente comparo todas las acciones posibles, eligio las de mayor prioridad y distribuyo el tiempo disponible de acuerdo con la funcion heuristica.
+
+==========================================================================================
+ESCENARIO: Cambio en el entorno: Sistemas Operativos tiene bajo progreso
+==========================================================================================
+
+Estado inicial
+--------------------------------------------------------------------------------
+- Bases de Datos Avanzadas | Tema: Consultas OQL y objetos | Calificacion: 80 | Progreso: 75% | Dias para examen: 6 | Impacto: 0.8
+- Graficacion y Videojuegos | Tema: Shaders y transformaciones | Calificacion: 78 | Progreso: 70% | Dias para examen: 5 | Impacto: 0.85
+- Redes y Telecomunicaciones | Tema: Modelo OSI y direccionamiento IP | Calificacion: 84 | Progreso: 82% | Dias para examen: 7 | Impacto: 0.75
+- Sistemas Operativos | Tema: Procesos e hilos | Calificacion: 58 | Progreso: 35% | Dias para examen: 4 | Impacto: 0.9
+- Inteligencia Artificial | Tema: Agentes inteligentes y heuristicas | Calificacion: 88 | Progreso: 85% | Dias para examen: 8 | Impacto: 0.7
+
+Ranking de prioridades:
+--------------------------------------------------------------------------------
+1. Sistemas Operativos - Procesos e hilos | Puntaje: 0.592 | Dificultad: 0.535 | Impacto: 0.900 | Urgencia: 0.250
+2. Graficacion y Videojuegos - Shaders y transformaciones | Puntaje: 0.451 | Dificultad: 0.260 | Impacto: 0.850 | Urgencia: 0.200
+3. Bases de Datos Avanzadas - Consultas OQL y objetos | Puntaje: 0.412 | Dificultad: 0.225 | Impacto: 0.800 | Urgencia: 0.167
+4. Redes y Telecomunicaciones - Modelo OSI y direccionamiento IP | Puntaje: 0.366 | Dificultad: 0.170 | Impacto: 0.750 | Urgencia: 0.143
+5. Inteligencia Artificial - Agentes inteligentes y heuristicas | Puntaje: 0.330 | Dificultad: 0.135 | Impacto: 0.700 | Urgencia: 0.125
+
+Plan de estudio:
+--------------------------------------------------------------------------------
+1. Estudiar Sistemas Operativos - Procesos e hilos durante 2 horas (puntaje: 0.592)
+2. Estudiar Graficacion y Videojuegos - Shaders y transformaciones durante 1 hora (puntaje: 0.451)
+3. Estudiar Bases de Datos Avanzadas - Consultas OQL y objetos durante 1 hora (puntaje: 0.412)
+4. Estudiar Redes y Telecomunicaciones - Modelo OSI y direccionamiento IP durante 1 hora (puntaje: 0.366)
+
+Estado actualizado despues del plan
+--------------------------------------------------------------------------------
+- Bases de Datos Avanzadas | Tema: Consultas OQL y objetos | Calificacion: 80 | Progreso: 80% | Dias para examen: 6 | Impacto: 0.8
+- Graficacion y Videojuegos | Tema: Shaders y transformaciones | Calificacion: 78 | Progreso: 75% | Dias para examen: 5 | Impacto: 0.85
+- Redes y Telecomunicaciones | Tema: Modelo OSI y direccionamiento IP | Calificacion: 84 | Progreso: 87% | Dias para examen: 7 | Impacto: 0.75
+- Sistemas Operativos | Tema: Procesos e hilos | Calificacion: 58 | Progreso: 45% | Dias para examen: 4 | Impacto: 0.9
+- Inteligencia Artificial | Tema: Agentes inteligentes y heuristicas | Calificacion: 88 | Progreso: 85% | Dias para examen: 8 | Impacto: 0.7
+
+Metricas del escenario:
+--------------------------------------------------------------------------------
+Puntaje promedio evaluado: 0.430
+Mejor puntaje encontrado: 0.592
+Diferencia entre primera y segunda opcion: 0.140
+Horas asignadas: 5
+Horas disponibles: 5
+Uso del tiempo disponible: 100.0%
+
+Interpretacion:
+El agente comparo todas las acciones posibles, eligio las de mayor prioridad y distribuyo el tiempo disponible de acuerdo con la funcion heuristica.
+

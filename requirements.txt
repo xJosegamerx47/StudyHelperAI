@@ -1,2 +1,2 @@
-# StudyHelperAI no requiere librerías externas para Python.
-# Usa únicamente módulos estándar: csv, copy, json, os y sys.
+# StudyHelperAI no requiere librerias externas para Python.
+# Usa unicamente modulos estandar: csv, copy, json, os y sys.
